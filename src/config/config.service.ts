@@ -1,4 +1,3 @@
-import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
 
@@ -49,7 +48,7 @@ class AppConfig extends ConfigService {
             username: this.getValue('DB_USERNAME'),
             password: this.getValue('DB_PASSWORD'),
             database: this.getValue('DB_NAME'),
-            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            entities: [__dirname + '/../**/*.entity.js'],
             synchronize: true,
         };
 
