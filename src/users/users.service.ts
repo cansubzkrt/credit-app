@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/users.entity';
@@ -29,5 +29,15 @@ export class UsersService {
 
         const newuser = this.userRepository.create(user);
         return this.userRepository.save(newuser);
+    }
+
+    /**
+     * Get user by userId.
+     * 
+     * @param userId 
+     */
+    async get(userId: number): Promise<boolean> {
+        const user = await this.userRepository.exist({ where: { id: userId }});
+        return user ? true : false;
     }
 }
