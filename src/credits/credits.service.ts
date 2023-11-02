@@ -12,6 +12,7 @@ import { ICreateInstallmentsInput } from '../installments/interface/create.insta
 import { CreditStatus } from './enum/credit.enum';
 import { InstallmentStatus } from '../installments/enum/installment.status.enum';
 import { getNextInstallmentDate } from '../helper';
+import { ICredits, IGetCreditsByUser } from './interface/get.credits.by.user.interface';
 
 @Injectable()
 export class CreditsService {
@@ -60,7 +61,7 @@ export class CreditsService {
                         amount: i === installment - 1 ? remainingAmount : installmentAmount,
                         dueDate: new Date(currentDate.toISOString().split('T')[0]),
                     }
-                    
+
                     // saved installment
                     const savedInstallment = await this.installmentService.createInstallments(createInstallment);
 
@@ -77,6 +78,38 @@ export class CreditsService {
                     creditId: savedCredit.id,
                     installments
                 };
+            }
+            throw new NotFoundException('User not found');
+        } catch (e) {
+            if (e.status && e.status != 500) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message || e);
+        }
+    }
+
+    /**
+     * List all credits by user.
+     * 
+     * @param userId 
+     * @returns 
+     */
+    async getCreditsByUser(userId: number): Promise<IGetCreditsByUser> {
+        try {
+            const user = await this.userService.get(userId);
+
+            if (user) {
+                const allCredits = await this.creditRepository.find({ where: { userId } });
+
+                return {
+                    userId,
+                    credits: allCredits.map(credit => ({
+                        id: credit.id,
+                        amount: credit.amount,
+                        status: credit.status,
+                        createdAt: credit.createdAt
+                    }))
+                }
             }
             throw new NotFoundException('User not found');
         } catch (e) {
