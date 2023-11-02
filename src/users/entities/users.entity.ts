@@ -1,5 +1,6 @@
 // src/users/entities/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Credits } from '../../credits/entities/credits.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('users')
 export class Users {
@@ -11,6 +12,9 @@ export class Users {
 
   @Column({ type: 'varchar'})
   lastName: string;
+
+  @OneToMany(() => Credits, (credit) => credit.user)
+  credits: Credits[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
