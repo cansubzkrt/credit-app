@@ -19,7 +19,9 @@ export class Installments {
     status: number;
 
     @ManyToOne(() => Credits, (credit) => credit.installments)
-    @JoinColumn({ name: 'creditId' })
+    credit: Credits;
+
+    @Column({ type: 'integer'})
     creditId: number;
 
     @Column({ type: 'date' })
